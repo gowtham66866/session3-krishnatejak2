@@ -12,7 +12,41 @@ def encoded_from_base10(number, base, digit_map):
     - you cannot use any in-built functions in the MATH module
 
     '''
-    return '123ABC'
+
+    from collections import Counter
+    WC = Counter(digit_map)
+
+    if not (2 <= base <= 36):
+        raise ValueError("InvalidBase : base argument is not in the range of [2,36]!56789a")
+
+    if any(val > 1 for val in list(WC.values())):
+        raise ValueError("DuplicateValues : digit_map argument has repeating values!")
+
+    if len(set(WC.keys())) != base:
+        raise ValueError("NotEnoughEncoders : digit_map argument has less encoders than what the base requires!")
+
+    number_flag = 0
+    if number < 0:
+        number = -1 * number
+        number_flag = 1
+
+    result_arr = []
+    while number >= base:
+        result_arr.insert(0, number % base)
+        number = (number // base)
+    result_arr.insert(0, number % base)
+
+    digit_map = [x for x in digit_map]
+    range_map = [x for x in range(len(digit_map))]
+    lookup_dict = dict(zip(range_map, digit_map))
+
+    result_arr = [lookup_dict[x] if x in lookup_dict.keys() else x for x in result_arr]
+    result_arr = "".join(result_arr)
+
+    if number_flag == 1:
+        result_arr = '-' + result_arr
+
+    return result_arr
 
 
 def float_equality_testing(a, b):
@@ -22,29 +56,41 @@ def float_equality_testing(a, b):
         - rel_tol = 1e-12
         - abs_tol = 1e-05
     '''
-    return a == b
+    rel_tol = 1e-12
+    abs_tol = 1e-05
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
 def manual_truncation_function(f_num):
     '''
-    This function emulates python's MATH.TRUNC method. It ignores everything after the decimal point. 
+    This function emulates python's MATH.TRUNC method. It ignores everything after the decimal point.
     It must check whether f_num is of correct type before proceed. You can use inbuilt constructors like int, float, etc
     '''
+    from fractions import Fraction
+    n = Fraction(f_num).limit_denominator()
+    trunc_val = divmod(n.numerator, n.denominator)[0]
+    trunc_val = trunc_val + 1 if (n.numerator < 0) or (n.denominator < 0) else trunc_val
+    return trunc_val
 
-    return f_num
 
 def manual_rounding_function(f_num):
     '''
     This function emulates python's inbuild ROUND function. You are not allowed to use ROUND function, but
     expected to write your one manually.
     '''
+    from fractions import Fraction
+    n = Fraction(f_num).limit_denominator()
+    trunc_val = divmod(n.numerator, n.denominator)[0]
+    trunc_val = trunc_val + 1 if (n.numerator < 0) or (n.denominator < 0) else trunc_val
+    return trunc_val
 
-    return f_num
 
 def rounding_away_from_zero(f_num):
     '''
     This function implements rounding away from zero as covered in the class
-    Desperately need to use INT constructor? Well you can't. 
-    Hint: use FRACTIONS and extract numerator. 
+    Desperately need to use INT constructor? Well you can't.
+    Hint: use FRACTIONS and extract numerator.
     '''
-    return 3.0
+    from fractions import Fraction
+    n = Fraction(f_num).limit_denominator()
+    return n.numerator()

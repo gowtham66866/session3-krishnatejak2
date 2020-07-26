@@ -150,4 +150,3 @@ def test_functions_for_zero():
     assert session3.float_equality_testing(0.0, 0.0), 'How can zero be not equal to zero?'
     assert session3.manual_truncation_function(0.0) == 0, 'Tuncation of 0 should be zero'
     assert session3.manual_rounding_function(0.0) == 0, 'Zero can only be rounded off to zero'
-
